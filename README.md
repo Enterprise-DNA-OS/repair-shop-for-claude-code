@@ -1,115 +1,120 @@
-<h1 align="center">Repair Shop for Claude Code</h1>
+# Repair Shop for Claude Code
 
-<p align="center">
-  <strong>The open-source phone and computer repair shop system that is just a database and Claude Code.</strong>
-</p>
+Your repair bench, parts, collection queue and customer remedy records in a database you own. Built by Enterprise DNA.
 
-<p align="center">
-  Created by <a href="https://www.enterprisedna.co"><strong>Enterprise DNA</strong></a>. Free and open source. Works with Claude Code, Codex, OpenCode or Cursor.
-</p>
+| Do it yourself | We customise it | We run it for you |
+|---|---|---|
+| Free under MIT. Install and change it. | Your fields, rules and RepairDesk records brought across. Counter screens and a different stack can be scoped. | Installed, connected and operated through Omni. One setup fee, then a retainer. |
+| [Quick start](#quick-start) | [Get your version built](https://enterprisedna.co/omni/book?offer=replace-software&utm_medium=github&utm_campaign=repairdesk) | [Book a call](https://enterprisedna.co/omni/book?offer=replace-software&utm_medium=github&utm_campaign=repairdesk) |
 
-<!-- three-doors -->
-<table align="center">
-  <tr>
-    <td align="center"><strong>Do it yourself</strong><br/>Clone it, run it, own it. Free, MIT.<br/><a href="#quick-start">Quick start</a></td>
-    <td align="center"><strong>We customise it</strong><br/>Your fields, your rules, your RepairDesk data brought across.<br/><a href="https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=repairdesk">Book a call</a></td>
-    <td align="center"><strong>We run it for you</strong><br/>Installed, connected and operated inside Omni. Setup fee, then a retainer.<br/><a href="https://enterprisedna.co/omni/instead-of/repairdesk?utm_source=github&utm_medium=readme&utm_campaign=repairdesk">How it works</a></td>
-  </tr>
-</table>
-
-<p align="center">
-  <a href="#what-is-this">What is this</a> &bull;
-  <a href="#why-no-front-end">Why no front end</a> &bull;
-  <a href="#quick-start">Quick start</a> &bull;
-  <a href="#the-commands">Commands</a> &bull;
-  <a href="#instead-of-repairdesk">Instead of RepairDesk</a> &bull;
-  <a href="#want-it-installed-and-run-for-you">Installed for you</a> &bull;
-  <a href="#license">License</a>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Node-20+-339933?style=flat-square" alt="Node 20+" />
-  <img src="https://img.shields.io/badge/PostgreSQL-any-336791?style=flat-square" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/PGlite-embedded-3ecf8e?style=flat-square" alt="PGlite" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT License" />
-</p>
-
----
-
-## What is this
-
-Repair Shop for Claude Code does the job you pay RepairDesk for, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and it can answer questions the RepairDesk dashboard cannot.
-
-<!-- TODO(author): the annual bill. One sentence: what a 10 to 50 person business typically pays RepairDesk per year, all in, with a source. -->
-
-Want the same thing with a web front end, or built on a different stack? That is a customisation, and it is exactly what Enterprise DNA does: [book a call](https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=repairdesk).
-
-<!-- TODO(author): two or three sentences on what this specific product covers and who it is for. -->
-
-## Why no front end
-
-- The front end was only ever there because the database was hard to talk to. That is no longer true.
-- Your data sits in plain Postgres tables you own. Any tool can read them. No export, no lock-in.
-- No seats, no tiers, no add-ons. Read [docs/why-no-front-end.md](docs/why-no-front-end.md) for the honest trade-offs too.
+Works with Claude Code, Codex, OpenCode or Cursor. AGENTS.md points every agent at the same CLAUDE.md and command recipes.
 
 ## Quick start
 
-Sixty seconds, no database install (an embedded Postgres runs inside Node):
+Requires Node 20 or newer. Commands work in Windows PowerShell and Linux shells.
 
 ```bash
 git clone https://github.com/Enterprise-DNA-OS/repair-shop-for-claude-code.git
 cd repair-shop-for-claude-code
 npm install
+npm test
 npm run demo
+npm run view
+npm run docs
 ```
 
-Then open the folder in Claude Code and type a slash command. <!-- TODO(author): name the first command to try. -->
+The fictional demo has two shops, three customers, nine repairs, three stock parts and two remedy claims. Relative dates expose late bench work, uncollected devices and missing notice evidence. Repeating the seed preserves local edits. Never seed production.
 
-### Use it with your own Postgres or Supabase
+Read-only reports go to views/. Job cards, collection records, AU repair notices and remedy records go to docs-out/. Change brand.json for the business name, colours and logo. Files are private and gitignored. There is no front end, device access, payment processing or automatic messaging. Keep counter POS and accounting separate. See [why no front end](docs/why-no-front-end.md).
 
-Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same commands, shared data, no per-seat fee.
+## Work from the records
 
-## The commands
+```bash
+node scripts/repair.mjs bench
+node scripts/repair.mjs ticket R-1003 --json
+node scripts/repair.mjs questions 1
+node scripts/repair.mjs log R-1003 --actor=Jo --note="Customer confirmed the revised due date"
+node scripts/repair.mjs import repairdesk --file=examples/repairdesk/tickets.csv --store="Harbour Repairs" --dry-run
+node scripts/repair.mjs export
+```
 
-<!-- TODO(author): a table of the slash commands in .claude/commands and what each one does. -->
+Every command accepts --json. Names are case-insensitive and ids accept unique prefixes. Ambiguity lists matches and exits 1. Money uses exact decimal inputs and integer cents in storage. Each shop keeps its currency; no currency conversion or revenue recognition is implied. Unknown balances stay unknown. Parts contribution excludes labour, tax adjustments and overhead and is not profit.
 
-| Command | What it does |
+| Job | Recipe |
 |---|---|
-| `/...` | ... |
+| The morning bench queue | `/bench` |
+| All repair records | `/tickets` |
+| One repair with its history | `/ticket` |
+| Customer snapshots | `/customers` |
+| Repairs waiting for parts | `/parts-due` |
+| Devices ready for pickup | `/collections` |
+| Parts at reorder point | `/stock-check` |
+| Stock holdings | `/parts` |
+| Warranty dates and remedy claims | `/warranties` |
+| Customer remedy follow-ups | `/claims` |
+| Missing evidence and late follow-ups | `/compliance` |
+| Late work and quiet customers | `/attention` |
+| Recorded values by store and currency | `/metrics` |
+| Ten analyses from the records | `/questions` |
+| Monday repair review | `/weekly-review` |
+| Assess an incoming device | `/intake` |
+| Add a shop, customer, part or claim | `/add` |
+| Record a repair event | `/log` |
+| Record delivery of a written repair notice | `/notice` |
+| Record customer approval and acceptance | `/approve` |
+| Start approved bench work | `/start` |
+| Place active work on parts hold | `/await-parts` |
+| Record workmanship checks before pickup | `/quality-check` |
+| Record physical handover | `/collect` |
+| Consume stock on a repair | `/use-part` |
+| Record physical stock receipt | `/receive-part` |
+| Record an agreed remedy outcome | `/resolve-claim` |
+| Update evidence and recorded amounts | `/update` |
+| Draft a collection reminder | `/draft-pickup` |
+| Bring RepairDesk ticket rows across | `/import` |
+| Write a portable private backup | `/export` |
+| Change the workflow | `/customise` |
+| Add a read-only report | `/new-view` |
+| Prepare paperwork | `/documents` |
 
-## Instead of repairdesk
+## Ten questions from the records
 
-<!-- TODO(author): how to bring data across from RepairDesk; link docs/replace-repairdesk.md -->
+`questions 1` through `questions 10` answer these today. They demonstrate cross-record analysis, not an unsupported claim that RepairDesk cannot produce similar reports.
 
-## Architecture
+1. Which late repairs are waiting for parts?
+2. Which customers have not heard from us for a week?
+3. Which finished devices have waited a week for collection?
+4. Which technicians have overdue work?
+5. Which Australian repairs lack notice evidence?
+6. Which parts are at their reorder point?
+7. Which repairs have recorded parts costs above their invoice?
+8. What recorded balance is waiting at each shop?
+9. Which customer remedy follow-ups are overdue?
+10. Which imported repairs still need approval or condition evidence?
 
-```
-repair-shop-for-claude-code/
-  CLAUDE.md                 how the operator wants this run (routing table + house rules)
-  AGENTS.md                 the same, for Codex / OpenCode / Cursor / Gemini CLI
-  .claude/commands/         the slash commands
-  scripts/                  the CLI the commands drive
-  scripts/lib/db.mjs        one adapter: DATABASE_URL (pg) or embedded PGlite
-  supabase/migrations/      plain SQL schema
-  supabase/seed.sql         demo data
-  docs/                     the thesis and the migration guide
-```
+## Your first hour: ten things to ask for
 
-## Built for coding agents
+1. Show the bench in promised-date order.
+2. Find late work waiting for parts.
+3. Show customers we have not contacted for a week.
+4. Show devices ready for collection for a week.
+5. Prepare the low-stock list by shop.
+6. Check Australian repair-notice evidence.
+7. Read open customer remedy follow-ups.
+8. Draft a pickup reminder for a checked repair.
+9. Add a field for the shelf location with /customise.
+10. Add a read-only report for overdue work by technician with /new-view.
 
-The database, CLI and command recipes work with Claude Code, Codex, OpenCode or Cursor. Ask your coding agent for a new command and have it implement and test the change against the same records.
+## Bring RepairDesk records across
 
-## Contributing
+The [switch guide](docs/replace-repairdesk.md) explains the documented Excel ticket export and CSV conversion. Import the converted sheet with one command, dry-run first. Customers remain separate snapshots until identities are verified. Original columns are preserved. Missing payments, notices, parts, approvals and quality checks are never inferred. Duplicate source keys skip existing records, preserving local work.
 
-Issues and pull requests are welcome. Keep the shape: plain SQL, a small CLI, a slash command per recurring job, no front end.
+## Database and evidence
 
-## Want it installed and run for you?
+Seven business tables, four SQL views, update triggers and transactional stock usage run on PGlite or PostgreSQL. Embedded data is in .data/db; DATA_DIR selects another location. DATABASE_URL selects a shared private database. Its owner configures roles, TLS, backups and access. This base has no web login or tenant boundary. One embedded process runs at a time.
 
-Enterprise DNA installs Repair Shop for Claude Code for your business, migrates your RepairDesk data, connects it to the rest of your tools, and runs it for you as part of **Omni**, our managed Command Center. One setup fee, then a monthly retainer.
+[Compliance checks](docs/compliance.md) cite ACCC repair-notice guidance and NZ service guarantees. They flag evidence gaps and chosen internal deadlines. They do not decide legal compliance or deny claims when a shop warranty expires. New AU approvals require notice evidence before acceptance; collection requires recorded quality checks.
 
-- Book a call: [enterprisedna.co/omni/book](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=repairdesk)
-- Read more: [enterprisedna.co/omni/instead-of/repairdesk](https://enterprisedna.co/omni/instead-of/repairdesk?utm_source=github&utm_medium=readme&utm_campaign=repairdesk)
+npm test uses a temporary embedded database, exercises workflows, failure paths and imports, and renders the reports and documents. The CI matrix covers Windows and Linux on Node 20 and 22. See docs/validation.md for what was actually run locally. Changes belong in new migrations with a command recipe and meaningful assertions.
 
-## License
-
-MIT. Copyright (c) 2026 Enterprise DNA.
+MIT licence. [Enterprise DNA](https://enterprisedna.co/omni/book?offer=replace-software&utm_medium=github&utm_campaign=repairdesk).

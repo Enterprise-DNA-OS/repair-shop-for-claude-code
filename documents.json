@@ -1,11 +1,76 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "job-card",
+    "title": "Repair job card",
+    "for_each": "SELECT t.id,t.ref FROM tickets t JOIN stores s ON s.id=t.store_id",
+    "file": "ref",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Device and requested work",
+        "sql": "SELECT ref,device,serial,fault,condition,technician,due_on,approval_ref FROM tickets WHERE id=$1"
+      },
+      {
+        "title": "Bench notes",
+        "sql": "SELECT actor,note,created_at FROM events WHERE ticket_id=$1 ORDER BY created_at"
+      }
+    ]
+  },
+  {
+    "name": "collection-receipt",
+    "title": "Collection record",
+    "for_each": "SELECT t.id,t.ref FROM tickets t JOIN stores s ON s.id=t.store_id",
+    "file": "ref",
+    "sections": [
+      {
+        "title": "Repair and recorded balance",
+        "sql": "SELECT ref,customer,device,status,currency,invoice_cents,paid_cents,balance_cents FROM v_bench WHERE id=$1",
+        "note": "Recorded invoice and payment snapshots. This document is not a tax invoice or a payment receipt."
+      },
+      {
+        "title": "Checks and handover",
+        "sql": "SELECT qa_note,qa_by,collected_at,warranty_until FROM tickets WHERE id=$1",
+        "note": "A shop warranty date does not determine statutory consumer rights."
+      }
+    ]
+  },
+  {
+    "name": "repair-notice",
+    "title": "Australian repair notice",
+    "for_each": "SELECT t.id,t.ref FROM tickets t JOIN stores s ON s.id=t.store_id WHERE s.country='AU'",
+    "file": "ref",
+    "sections": [
+      {
+        "title": "Notice given under the Australian Consumer Law",
+        "sql": "SELECT ref,device,serial FROM tickets WHERE id=$1",
+        "note": "Repairing this device may cause loss of stored user data. Back up your data before repair."
+      },
+      {
+        "title": "Refurbished goods and parts",
+        "sql": "SELECT ref FROM tickets WHERE id=$1",
+        "note": "Goods presented for repair may be replaced by refurbished goods of the same type rather than being repaired. Refurbished parts may be used to repair the goods."
+      },
+      {
+        "title": "Delivery evidence",
+        "sql": "SELECT notice_at,notice_ref,accepted_at FROM tickets WHERE id=$1",
+        "note": "DRAFT for review. Provide the written notice before acceptance for repair. Rendering this file does not prove delivery. Use only for a shop whose refurbishment practice matches the notice. Source: https://www.accc.gov.au/consumers/problem-with-a-product-or-service-you-bought/repair-notices"
+      }
+    ]
+  },
+  {
+    "name": "claim-record",
+    "title": "Customer remedy record",
+    "for_each": "SELECT t.id,t.ref FROM tickets t JOIN stores s ON s.id=t.store_id",
+    "file": "ref",
+    "sections": [
+      {
+        "title": "Device",
+        "sql": "SELECT ref,device,serial FROM tickets WHERE id=$1"
+      },
+      {
+        "title": "Claims and follow-ups",
+        "sql": "SELECT issue,status,follow_up_on,resolution FROM claims WHERE ticket_id=$1",
+        "note": "Assess statutory rights separately from the shop warranty. No automatic refusal or remedy decision."
+      }
     ]
   }
 ]

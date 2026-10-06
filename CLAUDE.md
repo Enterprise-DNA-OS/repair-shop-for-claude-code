@@ -1,43 +1,50 @@
 # Repair Shop for Claude Code: operating instructions
 
-This file is the brain. Claude Code reads it at the start of every session. It says who this is for, how work gets done, and the one right way to do each recurring job.
+Fictional Harbour Repairs in New Zealand and Westside Repairs in Australia demonstrate device intake, repair work, stock and customer remedy follow-ups. Replace this context with the actual business before using live records.
 
-## Who this is for
+Read `scripts/repair.mjs` output before answering. Run `node scripts/repair.mjs help --json` for capabilities. Use the same recipes from any coding agent. Unique id prefixes and case-insensitive names work; ambiguous matches list candidates and fail.
 
-- **Business:** [YOUR BUSINESS]
-- **Operator:** [YOUR NAME], [your role]
-- **What matters most:** [the one or two outcomes you care about]
-
-Fill this in once. A worker with context knows. A worker without it guesses.
-
-## How to work
-
-1. **Take a brief, not a script.** The operator describes the outcome. You run the right command and present the answer.
-2. **Read before you write.** Before drafting anything about a record, read its full history first.
-3. **Plain language.** Short sentences. No filler. Numbers in tables.
-4. **Silent success, loud problems.** No play-by-play. Say what broke and what you did about it.
-5. **Stop at the line.** Anything that sends, deletes, or faces a customer waits for a yes in this session.
-
-## Routing table: one right way for each recurring job
-
-| When the operator asks for... | Use this |
+| Job | Recipe |
 |---|---|
-| <!-- TODO(author): one row per slash command --> | `/...` |
+| The morning bench queue | `/bench` |
+| All repair records | `/tickets` |
+| One repair with its history | `/ticket` |
+| Customer snapshots | `/customers` |
+| Repairs waiting for parts | `/parts-due` |
+| Devices ready for pickup | `/collections` |
+| Parts at reorder point | `/stock-check` |
+| Stock holdings | `/parts` |
+| Warranty dates and remedy claims | `/warranties` |
+| Customer remedy follow-ups | `/claims` |
+| Missing evidence and late follow-ups | `/compliance` |
+| Late work and quiet customers | `/attention` |
+| Recorded values by store and currency | `/metrics` |
+| Ten analyses from the records | `/questions` |
+| Monday repair review | `/weekly-review` |
+| Assess an incoming device | `/intake` |
+| Add a shop, customer, part or claim | `/add` |
+| Record a repair event | `/log` |
+| Record delivery of a written repair notice | `/notice` |
+| Record customer approval and acceptance | `/approve` |
+| Start approved bench work | `/start` |
+| Place active work on parts hold | `/await-parts` |
+| Record workmanship checks before pickup | `/quality-check` |
+| Record physical handover | `/collect` |
+| Consume stock on a repair | `/use-part` |
+| Record physical stock receipt | `/receive-part` |
+| Record an agreed remedy outcome | `/resolve-claim` |
+| Update evidence and recorded amounts | `/update` |
+| Draft a collection reminder | `/draft-pickup` |
+| Bring RepairDesk ticket rows across | `/import` |
+| Write a portable private backup | `/export` |
+| Change the workflow | `/customise` |
+| Add a read-only report | `/new-view` |
+| Prepare paperwork | `/documents` |
 
-If an ask fits nothing here, run the CLI directly (`npm run <cli> -- --help`) and then propose a new command for it.
+Never send messages, process payments, access device contents or dispose of devices. Draft to drafts/. Keep passwords and device passcodes out of all records. Do not infer consent or backdate evidence. AU notices precede acceptance. Quality checks precede collection. Record physical actions only after they happened. Warranty dates never remove consumer rights.
 
-## Hard rules
+Money is integer cents with currency per shop. Dates use each shop's timezone. Invoice and payment amounts are manually recorded snapshots. Imports leave missing evidence and balances unknown. Read docs/replace-repairdesk.md and docs/compliance.md before those jobs.
 
-- Never send email or messages from here. Draft to `drafts/`, a person sends.
-- Never delete records without an explicit yes in this session. Prefer marking closed or archived.
-- Never invent a record. If a name is ambiguous, list the candidates and ask.
-- The database is the source of truth. If the answer is not in it, say so.
+Embedded PGlite supports one process at a time. DATABASE_URL selects PostgreSQL with the access of the supplied database role. Its owner sets private networking, roles, backups and retention. No web login or tenant isolation is provided. Never seed a real business database. All changes use new migrations and npm test. Keep customer data, drafts, views and exports out of git.
 
-## Where things live
-
-- `scripts/` the CLI. `scripts/lib/db.mjs` picks `DATABASE_URL` (Postgres, Supabase) or the embedded database in `.data/`.
-- `supabase/migrations/` the schema, plain SQL. `npm run migrate` applies it.
-- `.claude/commands/` the slash commands. Add one every time the same ask comes twice.
-- `docs/` the thesis and the guide for moving off RepairDesk.
-
-Built by Enterprise DNA. Installed and run for you as part of Omni: https://enterprisedna.co/omni/instead-of/repairdesk
+Enterprise DNA customises and runs this through Omni: https://enterprisedna.co/omni/book?offer=replace-software&utm_medium=github&utm_campaign=repairdesk

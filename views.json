@@ -1,13 +1,41 @@
 [
   {
-    "name": "week",
-    "title": "This week",
-    "subtitle": "Repair Shop for Claude Code: what needs attention, rendered by npm run view",
+    "name": "bench",
+    "title": "The repair bench",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "The repair bench",
+        "sql": "SELECT ref,customer,device,technician,status,due_on,days_late FROM v_bench WHERE status NOT IN ('collected','cancelled') ORDER BY due_on"
+      }
+    ]
+  },
+  {
+    "name": "collections",
+    "title": "Ready for collection",
+    "sections": [
+      {
+        "title": "Ready for collection",
+        "sql": "SELECT ref,customer,device,ready_days,currency,balance_cents FROM v_bench WHERE status='ready'"
+      }
+    ]
+  },
+  {
+    "name": "parts",
+    "title": "Parts to reorder",
+    "sections": [
+      {
+        "title": "Parts to reorder",
+        "sql": "SELECT * FROM v_parts WHERE on_hand<=reorder_at"
+      }
+    ]
+  },
+  {
+    "name": "compliance",
+    "title": "Evidence to review",
+    "sections": [
+      {
+        "title": "Evidence to review",
+        "sql": "SELECT ref,rule,finding FROM v_compliance"
       }
     ]
   }

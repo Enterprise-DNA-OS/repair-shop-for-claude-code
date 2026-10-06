@@ -1,0 +1,3 @@
+Ticket ID,Customer,Devices,Tasks,IMEI/ Serial,Task Type,Created By,Assigned To,Status,Created Time,Due On,Price,Discount,Tax,Total
+801,Jamie Example,Phone 13,Display replacement,DEMO-801,in-store,Jo,Ravi,Pending,2026-10-01T09:00:00+12:00,2026-10-08,200.00,0.00,30.00,230.00
+802,Taylor Example,Laptop 14,Battery replacement,DEMO-802,in-store,Jo,Jo,Repaired,2026-10-01T09:00:00+12:00,2026-10-07,100.00,0.00,15.00,115.00
